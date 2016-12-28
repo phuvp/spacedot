@@ -359,7 +359,7 @@ you should place your code here."
   (define-key evil-normal-state-map (kbd "s-<down>") 'evil-goto-line)
   (define-key evil-insert-state-map (kbd "s-<down>") 'evil-goto-line)
 
-
+  (global-set-key (kbd "s-b") 'shell)
 
   ;;remaps shift-L to go to line number.
   (global-set-key (kbd "s-L") 'goto-line)
