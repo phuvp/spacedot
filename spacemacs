@@ -38,7 +38,26 @@ values."
      ;; ----------------------------------------------------------------
      helm
      python
-     auto-completion
+     (c-c++ :variables c-c++-enable-clang-support t)
+     ;;company-mode
+     ;;company-clang
+     irony
+     flycheck-irony
+     company-irony
+     cscope
+     semantic
+     org
+     ;;company-
+     ;;auto-completion
+     (auto-completion :variables
+                      auto-completion-enable-help-tooltip t
+                      
+                      auto-completion-enable-sort-by-usage t
+                      auto-completion-complete-with-key-sequence-delay 0.01
+                      auto-completion-enable-snippets-in-popup t
+
+     )
+     evil-commentary
      ;; better-defaults
      emacs-lisp
      git
@@ -78,6 +97,8 @@ values."
   ;; This setq-default sexp is an exhaustive list of all the supported
   ;; spacemacs settings.
   (setq-default
+   company-quickhelp-mode 1
+   company-quickhelp-delay .1
    ;; If non nil ELPA repositories are contacted via HTTPS whenever it's
    ;; possible. Set it to nil if you have no way to use HTTPS in your
    ;; environment, otherwise it is strongly recommended to let it set to t.
@@ -87,6 +108,7 @@ values."
    dotspacemacs-elpa-https t
    ;; Maximum allowed time in seconds to contact an ELPA repository.
    dotspacemacs-elpa-timeout 5
+   company-quickhelp-mode 1
    ;; If non nil then spacemacs will check for updates at startup
    ;; when the current branch is not `develop'. Note that checking for
    ;; new versions works via git commands, thus it calls GitHub services
@@ -318,6 +340,7 @@ you should place your code here."
   ;;sets escape key to jk
   ;;(setq-default evil-escape-key-sequence "jk"))
   ;;display line nubmer by default
+  (global-company-mode) ;;makes company mode a global
   (global-linum-mode) ; Show line numbers by default
 
   (spacemacs/toggle-indent-guide-globally-on)
@@ -358,6 +381,7 @@ you should place your code here."
   (define-key evil-insert-state-map (kbd "s-j") 'evil-goto-line)
   (define-key evil-normal-state-map (kbd "s-<down>") 'evil-goto-line)
   (define-key evil-insert-state-map (kbd "s-<down>") 'evil-goto-line)
+  (define-key evil-insert-state-map (kbd "jk") 'evil-force-normal-state)
 
   (global-set-key (kbd "s-b") 'shell)
 
@@ -377,7 +401,7 @@ you should place your code here."
  '(evil-want-Y-yank-to-eol nil)
  '(package-selected-packages
    (quote
-    (purple-haze-theme planet-theme yapfify smeargle pyvenv pytest pyenv-mode py-isort pip-requirements orgit org magit-gitflow live-py-mode hy-mode helm-pydoc helm-gitignore helm-company helm-c-yasnippet gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit magit-popup git-commit with-editor cython-mode company-statistics company-anaconda company auto-yasnippet yasnippet anaconda-mode pythonic ac-ispell auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
+    (evil-commentary stickyfunc-enhance srefactor org-projectile org-present org-pomodoro alert log4e gntp org-download htmlize helm-cscope xcscope gnuplot company-quickhelp pos-tip disaster company-c-headers cmake-mode clang-format purple-haze-theme planet-theme yapfify smeargle pyvenv pytest pyenv-mode py-isort pip-requirements orgit org magit-gitflow live-py-mode hy-mode helm-pydoc helm-gitignore helm-company helm-c-yasnippet gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit magit-popup git-commit with-editor cython-mode company-statistics company-anaconda company auto-yasnippet yasnippet anaconda-mode pythonic ac-ispell auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
