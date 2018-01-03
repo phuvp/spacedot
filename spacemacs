@@ -41,16 +41,18 @@ values."
      ;; ----------------------------------------------------------------
      helm
      python
+     osx
      (c-c++ :variables c-c++-enable-clang-support t)
      ;;company-mode
      ;;company-clang
-     irony
-     flycheck-irony
-     company-irony
+     ;;irony
+     ;;flycheck-irony
+     ;;company-irony
      cscope
      semantic
      org
-     ;;company-
+     ;;company
+
      ;;auto-completion
      (auto-completion :variables
                       auto-completion-enable-help-tooltip t
@@ -278,7 +280,7 @@ values."
    ;; If non nil line numbers are turned on in all `prog-mode' and `text-mode'
    ;; derivatives. If set to `relative', also turns on relative line numbers.
    ;; (default nil)
-   dotspacemacs-line-numbers 'relative
+   dotspacemacs-line-numbers 't
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
    dotspacemacs-folding-method 'evil
@@ -317,18 +319,62 @@ values."
 It is called immediately after `dotspacemacs/init', before layer configuration
 executes.
  This function is mostly useful for variables that need to be set
-before packages are loaded. If you are unsure, you should try in setting them in
+before packages are loaded. If you are unsure, you should try in setting them ij
 `dotspacemacs/user-config' first."
   (add-hook 'prog-mode-hook
             (lambda ()
               (setq-default indent-tabs-mode nil
                             tab-width 4
-                            c-basic-offset 4)
+                            c-basic-offset 2)
               (setq indent-tabs-mode nil
                     tab-width 4
                     (setq indent-line-function 'insert-tab)
 
                     c-basic-offset 4)))
+(setq irony-mode-packages
+  '(irony
+    company-irony
+    flycheck-irony))
+
+(setq irony-mode-excluded-packages
+  '(auto-complete-clang))
+
+(defun irony-mode/init-irony ()
+  (use-package irony
+    :defer t
+    :init
+    (progn
+      (add-hook 'c++-mode-hook 'irony-mode)
+      (add-hook 'c-mode-hook 'irony-mode)
+      (add-hook 'objc-mode-hook 'irony-mode)
+      (add-hook 'irony-mode-hook
+                (lambda ()
+                  (define-key irony-mode-map [remap completion-at-point]
+                    'irony-completion-at-point-async)
+                  (define-key irony-mode-map [remap complete-symbol]
+                    'irony-completion-at-point-async)))
+      (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+      (spacemacs|diminish irony-mode " Ⓘ" " I"))))
+
+(defun irony-mode/init-company-irony ()
+  (use-package company-irony
+    :defer t
+    :init
+    (progn
+      (eval-after-load 'company
+        '(add-to-list 'company-backends 'company-irony))
+      (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+      (add-hook 'irony-mode-hook 'company-mode))))
+
+(defun irony-mode/init-flycheck-irony ()
+  (use-package flycheck-irony
+    ;; :defer t                            ; fix this ???
+    :init
+    (progn
+      (eval-after-load 'flycheck
+        '(add-to-list 'flycheck-checkers 'irony))
+      (add-hook 'irony-mode-hook 'flycheck-mode))))
+
   )
 
 
@@ -344,7 +390,7 @@ you should place your code here."
   ;;sets escape key to jk
   ;;(setq-default evil-escape-key-sequence "jk"))
   ;;display line nubmer by default
-  (global-company-mode) ;;makes company mode a global
+  (global-company-mode t) ;;makes company mode a global
   (global-linum-mode) ; Show line numbers by default
   
   (spacemacs/toggle-indent-guide-globally-on)
@@ -407,10 +453,12 @@ you should place your code here."
  '(evil-want-Y-yank-to-eol nil)
  '(package-selected-packages
    (quote
-    (mmm-mode markdown-toc markdown-mode gh-md web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern dash-functional tern coffee-mode xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help evil-commentary stickyfunc-enhance srefactor org-projectile org-present org-pomodoro alert log4e gntp org-download htmlize helm-cscope xcscope gnuplot company-quickhelp pos-tip disaster company-c-headers cmake-mode clang-format purple-haze-theme planet-theme yapfify smeargle pyvenv pytest pyenv-mode py-isort pip-requirements orgit org magit-gitflow live-py-mode hy-mode helm-pydoc helm-gitignore helm-company helm-c-yasnippet gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit magit-popup git-commit with-editor cython-mode company-statistics company-anaconda company auto-yasnippet yasnippet anaconda-mode pythonic ac-ispell auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
+    (winum fuzzy reveal-in-osx-finder pbcopy osx-trash osx-dictionary launchctl mmm-mode markdown-toc markdown-mode gh-md web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern dash-functional tern coffee-mode xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help evil-commentary stickyfunc-enhance srefactor org-projectile org-present org-pomodoro alert log4e gntp org-download htmlize helm-cscope xcscope gnuplot company-quickhelp pos-tip disaster company-c-headers cmake-mode clang-format purple-haze-theme planet-theme yapfify smeargle pyvenv pytest pyenv-mode py-isort pip-requirements orgit org magit-gitflow live-py-mode hy-mode helm-pydoc helm-gitignore helm-company helm-c-yasnippet gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit magit-popup git-commit with-editor cython-mode company-statistics company-anaconda company auto-yasnippet yasnippet anaconda-mode pythonic ac-ispell auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum link-hint info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
+
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((((class color) (min-colors 16777216)) (:foreground "#8898a9" :background "#192129")) (((class color) (min-colors 88)) (:foreground "#bcbcbc" :background "#1c1c1c")))))
