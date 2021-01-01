@@ -31,23 +31,30 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     typescript
+     rust
+     sql
+     yaml
      csv
      markdown
      python
      html
      javascript
-
      cscope
      semantic
      org
+     git
+     vue
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     helm
+     ;; helm
+     ivy
      osx
-     emacs-lisp	
+     emacs-lisp
+
      ;; auto-completion
      (auto-completion :variables		
 
@@ -60,12 +67,11 @@ values."
 
                       auto-completion-enable-snippets-in-popup t		
 
-
                       )
      ;; better-defaults
      emacs-lisp
      (c-c++ :variables c-c++-enable-clang-support t)
-
+     ;; (c-basic-offset . 4)
      ;; git
      ;; markdown
      ;; org
@@ -81,11 +87,17 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(
+        protobuf-mode
+        ;; vue-mode
+                                      )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '()
+   dotspacemacs-excluded-packages '(
+                                    google-c-style
+
+                                    )
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
    ;; `used-only' installs only explicitly used packages and uninstall any
@@ -104,6 +116,7 @@ values."
   ;; This setq-default sexp is an exhaustive list of all the supported
   ;; spacemacs settings.
   (setq-default
+
    company-quickhelp-mode 1
    company-quickhelp-delay .1
    ;; If non nil ELPA repositories are contacted via HTTPS whenever it's
@@ -160,6 +173,7 @@ values."
                          anti-zenburn
                          spacemacs-dark
                          sunny-day
+                         moe-light
                          )
 
    ;; purple-haze
@@ -167,8 +181,8 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Source Code Pro"
-                               :size 13
+   dotspacemacs-default-font '("Cutive Mono";;"Hack";;"Cutive Mono";;"Cutive-Mono";;"Cutive-Mono-Regular"
+                               :size 14
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -344,11 +358,20 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
-    ;;sets escape key to jk		
+
+  
+    (setq-default
+     c-default-style "bsd"
+      c-basic-offset 4)
+    ;; Fix ivy search project grep
+    (evil-leader/set-key "/" 'counsel-ag)
+
+
+;;sets escape key to jk		
 	  ;;(setq-default evil-escape-key-sequence "jk"))		
-	  ;;display line nubmer by default		
-	  (global-company-mode t) ;;makes company mode a global		
-	  (global-linum-mode) ; Show line numbers by default		
+  ;;display line nubmer by default		
+  (global-company-mode t) ;;makes company mode a global		
+  ;; (global-linum-mode) ; Show line numbers by default		
     (remove-hook 'prog-mode-hook #'smartparens-mode)
 
     (spacemacs/toggle-smartparens-globally-off)
@@ -392,7 +415,8 @@ you should place your code here."
 	  (define-key evil-insert-state-map (kbd "s-<down>") 'evil-goto-line)		
 	  ;;(define-key evil-insert-state-map (kbd "jk") 'evil-force-normal-state)		
 	  (setq-default evil-escape-key-sequence "jk")		
-			
+    (setq-default tab-width 4)
+
 			
 	  (global-set-key (kbd "s-b") 'shell)		
 			
@@ -409,12 +433,14 @@ you should place your code here."
  ;; If there is more than one, they won't work right.
  '(ansi-color-names-vector
    ["#0a0814" "#f2241f" "#67b11d" "#b1951d" "#4f97d7" "#a31db1" "#28def0" "#b2b2b2"])
+ '(org-agenda-files (quote ("~/testspace/todo.org")))
  '(package-selected-packages
    (quote
-    (zonokai-theme moe-theme emacs-faff-theme web-completion-data company-tern tern pos-tip company auto-complete web-beautify org-category-capture alert log4e gntp livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor yasnippet multiple-cursors js2-mode js-doc xcscope haml-mode coffee-mode markdown-mode dash-functional anaconda-mode pythonic evil-nerd-commenter define-word yapfify xterm-color ws-butler winum which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit stickyfunc-enhance srefactor spaceline smeargle slim-mode shell-pop scss-mode sass-mode reveal-in-osx-finder restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin planet-theme pip-requirements persp-mode pcre2el pbcopy paradox osx-trash osx-dictionary orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file neotree multi-term move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum live-py-mode linum-relative link-hint less-css-mode launchctl indent-guide hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-cscope helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-commentary evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav dumb-jump disaster diminish cython-mode csv-mode company-web company-statistics company-quickhelp company-c-headers company-anaconda column-enforce-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (tide typescript-mode flycheck toml-mode racer cargo rust-mode sql-indent magit-popup gitignore-mode magit transient git-commit with-editor wgrep smex ivy-hydra counsel-projectile counsel swiper ivy request org-plus-contrib parent-mode projectile pkg-info epl flx highlight smartparens iedit anzu evil goto-chg bind-map packed helm avy helm-core async popup hydra lv f powerline s bind-key dash yaml-mode protobuf-mode zonokai-theme emacs-faff-theme web-completion-data pos-tip company auto-complete web-beautify org-category-capture alert log4e gntp livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor yasnippet multiple-cursors js2-mode js-doc xcscope haml-mode coffee-mode markdown-mode dash-functional anaconda-mode pythonic evil-nerd-commenter define-word yapfify xterm-color ws-butler winum which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit stickyfunc-enhance srefactor spaceline smeargle slim-mode shell-pop scss-mode sass-mode reveal-in-osx-finder restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin planet-theme pip-requirements persp-mode pcre2el pbcopy paradox osx-trash osx-dictionary orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file neotree multi-term move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum live-py-mode linum-relative link-hint less-css-mode launchctl indent-guide hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-cscope helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-commentary evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav dumb-jump disaster diminish cython-mode csv-mode company-web company-statistics company-quickhelp company-c-headers company-anaconda column-enforce-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+ '(tab-width 4))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((((class color) (min-colors 16777216)) (:foreground "#8898a9" :background "#192129")) (((class color) (min-colors 88)) (:foreground "#bcbcbc" :background "#1c1c1c")))))
